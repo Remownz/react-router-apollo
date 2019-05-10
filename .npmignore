@@ -1,0 +1,9 @@
+.gitignore
+Jenkinsfile
+src
+.babelrc
+.eslintrc
+.prettierrc
+README.md
+rollup.config.js
+coverage

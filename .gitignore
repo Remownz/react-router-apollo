@@ -1,0 +1,9 @@
+lib
+node_modules
+.idea
+.vscode
+.env
+*.log
+coverage/*
+!coverage/badge*.svg
+.cache
