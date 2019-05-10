@@ -11,7 +11,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "publishConfig": {
+    "registry": "https://repo.eu.idealo.com/artifactory/api/npm/npm-local"
+  },
+  "repository": "ssh://git@code.eu.idealo.com:7999/rflug/lib_react-router-apollo.git",
+  "author": "Christian Hoffart <christian.hoffart@idealo.de>",
   "license": "ISC",
   "devDependencies": {
     "@babel/preset-env": "^7.4.4",
