@@ -29,19 +29,24 @@ export const link = new ApolloLink((operation, forward) => {
     return acc;
   }, {});
 
-  history.push(generatePath(data.currentRoute, variables));
+  const generatedPath = generatePath(data.currentRoute, variables);
+
+  if(generatedPath !== history.location.pathname){
+    history.push(generatedPath);
+  }
+
 
   return forward(operation);
 });
 
 
-class ContextComponent extends React.Component {
+class ComponentWrapper extends React.Component {
   componentDidMount() {
-    const { client, transform, mutate } = this.props;
+    const { client, transform, mutate, match } = this.props;
 
     client.writeData({
       data: {
-        currentRoute: this.props.match.path
+        currentRoute: match.path
       }
     });
 
@@ -60,7 +65,7 @@ class ContextComponent extends React.Component {
 
     history.listen((location, action) => {
       const matchedPath = matchPath(location.pathname, {
-        path: this.props.match.path
+        path: match.path
       });
 
       if (action === 'POP') {
@@ -84,17 +89,19 @@ class ContextComponent extends React.Component {
 
     return <Component />;
   }
-
 }
 
+const ComponentWrapperWithClient = withApollo(ComponentWrapper);
+
 export const ApolloRoute = ({ component, transform, mutate, ...rest }) => {
-  const ContextComponentWithClient = (props) =>
-    <ContextComponent
+  const Component = props =>
+    <ComponentWrapperWithClient
       {...props}
-      component={component} transform={transform}
+      component={component}
+      transform={transform}
       mutate={mutate}
     />;
 
-  return <Route {...rest} component={withApollo(ContextComponentWithClient)} />;
+  return <Route {...rest} component={Component} />;
 };
 
