@@ -12,7 +12,7 @@
   },
   "keywords": [],
   "publishConfig": {
-    "registry": "https://repo.eu.idealo.com/artifactory/api/npm/npm-local"
+    "registry": "https://registry.npmjs.org/"
   },
   "repository": "https://github.com/Remownz/react-router-apollo.git",
   "author": "Christian Hoffart <christian.hoffart@idealo.de>",
