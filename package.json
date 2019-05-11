@@ -1,5 +1,5 @@
 {
-  "name": "react-router-apollo",
+  "name": "@idealo/react-router-apollo",
   "version": "0.10.0",
   "description": "",
   "main": "lib/index.js",
@@ -15,7 +15,7 @@
     "registry": "https://repo.eu.idealo.com/artifactory/api/npm/npm-local"
   },
   "repository": "https://github.com/Remownz/react-router-apollo.git",
-  "author": "Christian Hoffart <christian@easyflair.de>",
+  "author": "Christian Hoffart <christian.hoffart@idealo.de>",
   "license": "ISC",
   "devDependencies": {
     "@babel/preset-env": "^7.4.4",

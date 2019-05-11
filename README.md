@@ -1,5 +1,3 @@
-[![Build Status](https://jenkins2.eu.idealo.com/jenkins/buildStatus/icon?job=RFLUG_javascript-react-router-apollo_commit)](https://jenkins2.eu.idealo.com/jenkins/view/Reise/view/Flug/view/JavaScript/job/RFLUG_javascript-react-router-apollo_commit/)
-
 # react-router-apollo
 
 Keep your router in sync with apollo client cache.
@@ -7,7 +5,7 @@ Keep your router in sync with apollo client cache.
 ## Installation
 
 ```
-npm install @idealo/react-router-apollo
+npm install react-router-apollo
 ```
 
 ## How It Works
