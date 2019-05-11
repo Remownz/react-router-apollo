@@ -1,11 +1,11 @@
 # react-router-apollo
 
-Keep your router in sync with apollo client cache.
+Just a prove of concept. Keep your router in sync with apollo client cache.
 
 ## Installation
 
 ```
-npm install react-router-apollo
+npm install @idealo/react-router-apollo
 ```
 
 ## How It Works
@@ -58,12 +58,13 @@ ReactDOM.render(
                         returnDate: (isoDateString) => isoDateString ? dateFormat(new Date(isoDateString), URL_DATE_FORMAT) : null
                     },
                 }}
-                mutate={(client, data) => {
+                mutate={(client, { outboundDate, returnDate }) => {
                     client.writeData({
                         data: {
                             flightRecommendation: {
                                 __typename: "FlightRecommendation",
-                                ...data
+                                outboundDate,
+                                returnDate
                             }
                         }
                     })
