@@ -10,7 +10,8 @@ npm install @idealo/react-router-apollo
 
 ## How It Works
 
-tba 
+For every mutation request your history (push) will be synced. 
+On every pop state the mutate function will be triggered.
 
 ## Tutorial
 

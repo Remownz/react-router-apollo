@@ -8,3 +8,4 @@ node_modules
 coverage/*
 !coverage/badge*.svg
 .cache
+package-lock.json
