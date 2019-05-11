@@ -2,7 +2,7 @@
 
 # react-router-apollo
 
-Keep your router in sync with apollo client cache.
+Just a prove of concept. Keep your router in sync with apollo client cache.
 
 ## Installation
 
@@ -12,7 +12,8 @@ npm install @idealo/react-router-apollo
 
 ## How It Works
 
-tba 
+For every mutation request your history (push) will be synced. 
+On every pop state the mutate function will be triggered.
 
 ## Tutorial
 
@@ -65,7 +66,8 @@ ReactDOM.render(
                         data: {
                             flightRecommendation: {
                                 __typename: "FlightRecommendation",
-                                ...data
+                                outboundDate,
+                                returnDate
                             }
                         }
                     })
