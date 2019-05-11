@@ -2,6 +2,7 @@
 Jenkinsfile
 src
 .npmrc
+.idea
 .babelrc
 .eslintrc
 .prettierrc
