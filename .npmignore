@@ -1,6 +1,7 @@
 .gitignore
 Jenkinsfile
 src
+.idea
 .babelrc
 .eslintrc
 .prettierrc
