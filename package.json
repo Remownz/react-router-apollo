@@ -18,6 +18,7 @@
   "author": "Christian Hoffart <christian.hoffart@idealo.de>",
   "license": "ISC",
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
     "@babel/preset-react": "^7.0.0",
     "rimraf": "^2.6.3",
