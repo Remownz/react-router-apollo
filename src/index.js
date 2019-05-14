@@ -35,14 +35,43 @@ export const link = new ApolloLink((operation, forward) => {
     history.push(generatedPath);
   }
 
-
   return forward(operation);
 });
 
 
 class ComponentWrapper extends React.Component {
+  mutate = (matchedPath) => {
+    const { client, transform, mutate } = this.props;
+
+    const data = Object.keys(matchedPath.params).reduce((acc, current) => {
+      if (transform.toState !== undefined && typeof transform.toState[current] === 'function') {
+        acc[current] = transform.toState[current](matchedPath.params[current]);
+      } else {
+        acc[current] = matchedPath.params[current];
+      }
+
+      return acc;
+    }, {});
+
+    if (typeof mutate === 'function') mutate(client, data);
+  };
+
+  addHistoryListener = () => {
+    const { match } = this.props;
+
+    this.unlisten = history.listen((location, action) => {
+      const matchedPath = matchPath(location.pathname, {
+        path: match.path
+      });
+
+      if (action === 'POP') {
+        this.mutate(matchedPath)
+      }
+    });
+  };
+
   componentDidMount() {
-    const { client, transform, mutate, match } = this.props;
+    const { client, transform, match, location } = this.props;
 
     client.writeData({
       data: {
@@ -63,25 +92,16 @@ class ComponentWrapper extends React.Component {
       }
     };
 
-    history.listen((location, action) => {
-      const matchedPath = matchPath(location.pathname, {
-        path: match.path
-      });
-
-      if (action === 'POP') {
-        const data = Object.keys(matchedPath.params).reduce((acc, current) => {
-          if (transform.toState !== undefined && typeof transform.toState[current] === 'function') {
-            acc[current] = transform.toState[current](matchedPath.params[current]);
-          } else {
-            acc[current] = matchedPath.params[current];
-          }
-
-          return acc;
-        }, {});
-
-        if (typeof mutate === 'function') mutate(client, data);
-      }
+    const matchedPath = matchPath(location.pathname, {
+      path: match.path
     });
+
+    this.mutate(matchedPath);
+    this.addHistoryListener();
+  }
+
+  componentWillUnmount() {
+    this.unlisten();
   }
 
   render() {
