@@ -1,50 +1,46 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import { ApolloLink } from 'apollo-link';
 import { generatePath, matchPath, Route } from 'react-router';
-import { createHashHistory } from 'history';
 import { withApollo } from 'react-apollo';
 
-export const history = createHashHistory();
+export function createLink(history){
+  return new ApolloLink((operation, forward) => {
+    const { transform, pushPath } = operation.getContext();
 
-export const link = new ApolloLink((operation, forward) => {
-  const { cache, transform } = operation.getContext();
+    // apply transform function
+    const variables = Object.keys(operation.variables).reduce((acc, current) => {
+      if (
+        transform !== undefined
+        && transform.toURL !== undefined
+        && typeof transform.toURL[current] === 'function') {
+        acc[current] = transform.toURL[current](operation.variables[current]);
+      } else {
+        acc[current] = operation.variables[current];
+      }
 
-  const data = cache.readQuery({
-    query: gql`
-        query {
-            currentRoute @client
-        }
-    `
-  });
+      return acc;
+    }, {});
 
-  // apply transform function
-  const variables = Object.keys(operation.variables).reduce((acc, current) => {
-    if (transform.toURL !== undefined && typeof transform.toURL[current] === 'function') {
-      acc[current] = transform.toURL[current](operation.variables[current]);
-    } else {
-      acc[current] = operation.variables[current];
+    const generatedPath = generatePath(pushPath, variables);
+
+    if(generatedPath !== history.location.pathname){
+      history.push(generatedPath);
     }
 
-    return acc;
-  }, {});
-
-  const generatedPath = generatePath(data.currentRoute, variables);
-
-  if(generatedPath !== history.location.pathname){
-    history.push(generatedPath);
-  }
-
-  return forward(operation);
-});
-
+    return forward(operation);
+  });
+}
 
 class ComponentWrapper extends React.Component {
   mutate = (matchedPath) => {
     const { client, transform, mutate } = this.props;
 
     const data = Object.keys(matchedPath.params).reduce((acc, current) => {
-      if (transform.toState !== undefined && typeof transform.toState[current] === 'function') {
+      if (
+        transform !== undefined
+        && transform.toState !== undefined
+        && typeof transform.toState[current] === 'function'
+      ) {
         acc[current] = transform.toState[current](matchedPath.params[current]);
       } else {
         acc[current] = matchedPath.params[current];
@@ -53,11 +49,11 @@ class ComponentWrapper extends React.Component {
       return acc;
     }, {});
 
-    if (typeof mutate === 'function') mutate(client, data);
+    if (typeof mutate === 'function' && data) mutate(client, data);
   };
 
   addHistoryListener = () => {
-    const { match } = this.props;
+    const { match, history } = this.props;
 
     this.unlisten = history.listen((location, action) => {
       const matchedPath = matchPath(location.pathname, {
@@ -71,13 +67,7 @@ class ComponentWrapper extends React.Component {
   };
 
   componentDidMount() {
-    const { client, transform, match, location } = this.props;
-
-    client.writeData({
-      data: {
-        currentRoute: match.path
-      }
-    });
+    const { client, transform, match, location, pushPath } = this.props;
 
     client.defaultOptions = { // make transform available to context
       ...client.defaultOptions,
@@ -85,6 +75,7 @@ class ComponentWrapper extends React.Component {
         ...(client.defaultOptions.mutate || {}),
         context: {
           ...((client.defaultOptions.mutate && client.defaultOptions.mutate.context) || {}),
+          pushPath,
           transform: {
             ...transform
           }
@@ -105,21 +96,22 @@ class ComponentWrapper extends React.Component {
   }
 
   render() {
-    const Component = this.props.component;
+    const { component, ...rest } = this.props;
 
-    return <Component />;
+    return React.createElement(component, rest)
   }
 }
 
 const ComponentWrapperWithClient = withApollo(ComponentWrapper);
 
-export const ApolloRoute = ({ component, transform, mutate, ...rest }) => {
+export const ApolloRoute = ({ component, transform, mutate, pushPath, ...rest }) => {
   const Component = props =>
     <ComponentWrapperWithClient
       {...props}
       component={component}
       transform={transform}
       mutate={mutate}
+      pushPath={pushPath || props.match.path}
     />;
 
   return <Route {...rest} component={Component} />;
