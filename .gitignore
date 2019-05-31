@@ -9,3 +9,4 @@ coverage/*
 !coverage/badge*.svg
 .cache
 package-lock.json
+.rpt2_cache

@@ -1,6 +1,6 @@
 # react-router-apollo
 
-Just a prove of concept. Keep your router in sync with apollo client cache.
+Keep your router in sync with apollo client cache.
 
 ## Installation
 
