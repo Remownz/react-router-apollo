@@ -1,4 +1,4 @@
-import { ApolloClient } from "apollo-client";
+import { ApolloClient } from 'apollo-client';
 import * as H from 'history';
 import * as React from 'react';
 import { withApollo } from 'react-apollo';
@@ -25,7 +25,6 @@ interface MatchParams {
 }
 
 class ComponentWrapper extends React.Component<ComponentWrapperProps, any> {
-  private unlisten: any;
 
   static _hasToStateTransform(transform, key) {
     return transform !== undefined
@@ -33,24 +32,28 @@ class ComponentWrapper extends React.Component<ComponentWrapperProps, any> {
       && typeof transform.toState[key] === 'function';
   }
 
+  private unlisten: any;
+
   _mutate = (matchedPath: matchType) => {
     const { client, transform, mutate } = this.props;
 
     const data = Object.keys(matchedPath.params).reduce((acc: any, current: string) => {
-      acc[current] = ComponentWrapper._hasToStateTransform(transform, current) ? transform.toState[current](matchedPath.params[current]) : matchedPath.params[current];
+      acc[current] = ComponentWrapper._hasToStateTransform(transform, current)
+        ? transform.toState[current](matchedPath.params[current])
+        : matchedPath.params[current];
 
       return acc;
     }, {});
 
     if (typeof mutate === 'function' && data) {
-      mutate(client, data)
-    };
+      mutate(client, data);
+    }
   };
 
-  _addHistoryListener = () => {
-    const { match, history } = this.props;
-
+  _addHistoryListener = (history: H.History) => {
     this.unlisten = history.listen((location, action) => {
+      const { match } = this.props;
+
       const matchedPath = matchPath(location.pathname, {
         path: match.path,
       });
@@ -62,7 +65,7 @@ class ComponentWrapper extends React.Component<ComponentWrapperProps, any> {
   };
 
   componentDidMount() {
-    const { client, transform, match, location, pushPath } = this.props;
+    const { client, transform, match, location, pushPath, history } = this.props;
 
     client.defaultOptions = { // make transform available to context
       ...client.defaultOptions,
@@ -83,7 +86,7 @@ class ComponentWrapper extends React.Component<ComponentWrapperProps, any> {
     });
 
     this._mutate(matchedPath);
-    this._addHistoryListener();
+    this._addHistoryListener(history);
   }
 
   componentWillUnmount() {
