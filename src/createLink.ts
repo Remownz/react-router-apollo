@@ -10,8 +10,11 @@ export default function createLink(history: H.History) {
   };
 
   return new ApolloLink((operation, forward) => {
-    const { transform, pushPath } = operation.getContext();
+    const { transform, pushPath, historyPush } = operation.getContext();
 
+    if(!historyPush) {
+      return forward(operation);
+    }
     // apply transform function
     const variables = Object.keys(operation.variables).reduce((acc: any, current: string) => {
       acc[current] = hasToURLTransform(transform, current)
