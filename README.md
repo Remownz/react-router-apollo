@@ -12,7 +12,7 @@ npm install @idealo/react-router-apollo
 
 ## How It Works
 
-For every mutation request your history (push) will be synced. 
+Every mutation request with context `historyPush: true` your browser history (push) will be synced. 
 On every pop state the mutate function will be triggered.
 
 ## Tutorial
@@ -90,6 +90,21 @@ ReactDOM.render(
         </Router>
     </ApolloProvider>, document.getElementById("reactRoot"));
 ```
+
+### mutation sample
+
+```
+client.mutate({
+    context: {
+        historyPush: true
+    },
+    mutation: gql`..`,
+    variables: {
+        ...
+    }
+})
+```
+
 ### ApolloRoute Properties
 
  __transform__ (optional):  Define transform callbacks for push history (toUrl) and pop history (toState) on your path parameters.  
