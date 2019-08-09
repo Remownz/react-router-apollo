@@ -9,3 +9,4 @@ src
 README.md
 rollup.config.js
 coverage
+.rpt2_cache

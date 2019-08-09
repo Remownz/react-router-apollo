@@ -1,4 +1,7 @@
 import { ApolloClient } from 'apollo-client';
+import { getMainDefinition } from 'apollo-utilities';
+// import { ApolloLink } from "apollo-link";
+
 import * as H from 'history';
 import * as React from 'react';
 import { withApollo } from 'react-apollo';
@@ -24,6 +27,11 @@ interface MatchParams {
   [key: string]: string;
 }
 
+interface Definition {
+  kind: string;
+  operation?: string;
+};
+
 class ComponentWrapper extends React.Component<ComponentWrapperProps, any> {
 
   static _hasToStateTransform(transform, key) {
@@ -33,6 +41,12 @@ class ComponentWrapper extends React.Component<ComponentWrapperProps, any> {
   }
 
   private unlisten: any;
+
+  constructor(props){
+    super(props);
+
+    this._addOperationContext();
+  }
 
   _mutate = (matchedPath: matchType) => {
     const { client, transform, mutate } = this.props;
@@ -64,22 +78,27 @@ class ComponentWrapper extends React.Component<ComponentWrapperProps, any> {
     });
   };
 
-  componentDidMount() {
-    const { client, transform, match, location, pushPath, history } = this.props;
+  _addOperationContext = () => {
+    const { client, transform, pushPath } = this.props;
+    const originRequest = client.link.request;
 
-    client.defaultOptions = { // make transform available to context
-      ...client.defaultOptions,
-      mutate: {
-        ...(client.defaultOptions.mutate || {}),
-        context: {
-          ...((client.defaultOptions.mutate && client.defaultOptions.mutate.context) || {}),
+    client.link.request = (requestOperation, forward) => {
+      const { kind, operation }: Definition = getMainDefinition(requestOperation.query);
+
+      if (kind === 'OperationDefinition' && operation === "mutation") {
+        requestOperation.setContext({
+          ...requestOperation.getContext(),
           pushPath,
-          transform: {
-            ...transform,
-          },
-        },
-      },
+          transform
+        });
+      }
+
+      return originRequest(requestOperation, forward);
     };
+  };
+
+  componentDidMount() {
+    const { match, location, history } = this.props;
 
     const matchedPath = matchPath(location.pathname, {
       path: match.path,
