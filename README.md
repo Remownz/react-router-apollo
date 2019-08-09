@@ -89,7 +89,7 @@ ReactDOM.render(
     </ApolloProvider>, document.getElementById("reactRoot"));
 ```
 
-### mutation sample
+### mutation example
 
 ```
 client.mutate({
