@@ -1,6 +1,6 @@
 {
   "name": "@idealo/react-router-apollo",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "",
   "main": "./lib/index.js",
   "module": "./lib/bundle.esm.js",
@@ -40,12 +40,12 @@
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "apollo-client": "^2.6.0",
+    "apollo-client": "^2.6.4",
     "apollo-link": "^1.2.12",
     "apollo-utilities": "^1.3.2",
     "graphql": "^14.3.1",
     "react": "^16.8.6",
-    "react-apollo": "^2.5.6",
+    "react-apollo": "^2.5.8",
     "react-dom": "^16.8.6",
     "react-router": "^5.0.0"
   },
